@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { Eye, NotebookPen, Trash2 } from "lucide-react";
+import { NotebookPen, Trash2 } from "lucide-react";
 import * as MedicineService from "../../services/MedicineService";
 import moment from "moment";
 
 const MedicineList = () => {
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [medicines, setMedicines] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-    const [modalData, setModalData] = useState(null);
     const [updateModalData, setUpdateModalData] = useState(null);
     const user = useSelector((state) => state.user);
     const [currentPage, setCurrentPage] = useState(1);
@@ -38,27 +35,9 @@ const MedicineList = () => {
     );
     const totalPages = Math.ceil(filteredMedicines.length / itemsPerPage);
 
-    const nextImage = () => {
-        if (modalData?.avatar?.length) {
-            setCurrentImageIndex((prevIndex) => (prevIndex + 1) % modalData.avatar.length);
-        }
-    };
 
-    const prevImage = () => {
-        if (modalData?.avatar?.length) {
-            setCurrentImageIndex((prevIndex) => (prevIndex - 1 + modalData.avatar.length) % modalData.avatar.length);
-        }
-    };
 
-    const openModal = (data) => {
-        setModalData(data);
-        setIsModalOpen(true);
-    };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setModalData(null);
-    };
 
     const openUpdateModal = (data) => {
         setUpdateModalData(data);
@@ -82,6 +61,7 @@ const MedicineList = () => {
                 quantity: updateModalData.quantity,
                 ingredient: updateModalData.ingredient,
                 expiry: updateModalData.expiry,
+                uses: updateModalData.uses,
             });
             closeUpdateModal();
             setMedicines((prevMedicines) =>
@@ -125,16 +105,16 @@ const MedicineList = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-            <div className="bg-white w-full max-w-5xl rounded-lg shadow-md flex">
-                <div className="w-1/4 bg-gray-50 p-6">
+        <div className="  flex items-center justify-center p-6">
+            <div className="bg-white w-full max-w-7xl rounded-lg shadow-md flex">
+                <div className="w-1/5 bg-gray-50 p-6">
                     <ul className="space-y-4">
                         <li className="text-lg font-semibold text-gray-700">Tài Khoản Của Tôi</li>
-                        <li>
-                            <Link to={"/admin"} className="text-gray-600">Hồ Sơ</Link>
-                        </li>
                         {user?.isAdmin && (
                             <>
+                                <li>
+                                    <Link to={"/admin"} className="text-gray-600">Hồ Sơ</Link>
+                                </li>
                                 <li>
                                     <Link to={"/admin/doctor-list"} className="text-gray-600">Danh sách bác sĩ</Link>
                                 </li>
@@ -144,12 +124,15 @@ const MedicineList = () => {
                                 <li>
                                     <Link to={"/admin/medicine-list"} className=" text-orange-500 font-semibold">Thuốc</Link>
                                 </li>
+                                <li>
+                                    <Link to={"/admin/specialty-list"} className="text-gray-600">Chuyên khoa</Link>
+                                </li>
                             </>
                         )}
                     </ul>
                 </div>
 
-                <div className="w-3/4 p-6">
+                <div className="w-4/5 p-6">
                     <div className="flex justify-between items-center mb-6">
                         <div>
 
@@ -200,7 +183,7 @@ const MedicineList = () => {
                                         <th className="border border-gray-300 px-4 py-2">Số lượng</th>
                                         <th className="border border-gray-300 px-4 py-2">Thành phần</th>
                                         <th className="border border-gray-300 px-4 py-2">Ngày hết hạn</th>
-                                        <th className="border border-gray-300 px-4 py-2">Xem chi tiết</th>
+                                        <th className="border border-gray-300 px-4 py-2">Công dụng</th>
                                         <th className="border border-gray-300 px-4 py-2">Cập nhật</th>
                                         <th className="border border-gray-300 px-4 py-2">Xóa</th>
                                     </tr>
@@ -214,11 +197,7 @@ const MedicineList = () => {
                                                 <td className="border border-gray-300 px-4 py-2">{item.quantity}</td>
                                                 <td className="border border-gray-300 px-4 py-2">{item.ingredient}</td>
                                                 <td className="border border-gray-300 px-4 py-2">{formatDateWithDayOfWeek(item.expiry)}</td>
-                                                <td className="border border-gray-300 px-4 py-2">
-                                                    <button className="text-black px-4 py-2 rounded flex justify-center items-center" onClick={() => openModal(item)}>
-                                                        <Eye />
-                                                    </button>
-                                                </td>
+                                                <td className="border border-gray-300 px-4 py-2">{item.uses}</td>
                                                 <td className="border border-gray-300 px-4 py-2">
                                                     <button className="text-black px-4 py-2 rounded flex justify-center items-center" onClick={() => openUpdateModal(item)}>
                                                         <NotebookPen />
@@ -253,31 +232,6 @@ const MedicineList = () => {
                 </div>
             </div>
 
-            {/* Modals */}
-            {/* Modal hiển thị chi tiết */}
-            {isModalOpen && modalData && (
-                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div className="bg-white rounded-lg p-5 max-w-sm w-full">
-                        <h2 className="text-lg font-bold mb-4">Chi tiết thông tin</h2>
-                        <p><strong>Tên thuốc:</strong> {modalData.name}</p>
-                        <p><strong>Số lượng:</strong> {modalData.quantity}</p>
-                        <p><strong>Thành phần:</strong> {modalData.ingredient}</p>
-                        <p><strong>Ngày hết hạn:</strong> {modalData.expiry}</p>
-                        <p><strong>Công dụng:</strong> {modalData.uses}</p>
-
-                        <div className="relative">
-                            {modalData.avatar?.length > 0 && (
-                                <>
-                                    <img src={modalData.avatar[currentImageIndex]} alt={`Hình ảnh thuốc ${currentImageIndex + 1}`} className="w-full h-48 object-contain mb-4" />
-                                    <button onClick={prevImage} className="absolute left-0 top-1/2 transform -translate-y-1/2 px-2 bg-gray-200 rounded-full">{"<"}</button>
-                                    <button onClick={nextImage} className="absolute right-0 top-1/2 transform -translate-y-1/2 px-2 bg-gray-200 rounded-full">{">"}</button>
-                                </>
-                            )}
-                        </div>
-                        <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={closeModal}>Đóng</button>
-                    </div>
-                </div>
-            )}
 
             {/* Modal cập nhật thông tin */}
             {isUpdateModalOpen && updateModalData && (
@@ -286,9 +240,16 @@ const MedicineList = () => {
                         <h2 className="text-lg font-bold mb-4">Cập nhật thông tin thuốc</h2>
                         <input className="w-full px-4 py-2 border rounded mb-4" name="name" value={updateModalData.name} onChange={handleUpdateChange} placeholder="Tên thuốc" />
                         <input className="w-full px-4 py-2 border rounded mb-4" name="quantity" value={updateModalData.quantity} onChange={handleUpdateChange} placeholder="Số lượng" />
-                        <input className="w-full px-4 py-2 border rounded mb-4" name="ingredient" value={updateModalData.ingredient} onChange={handleUpdateChange} placeholder="Thành phần" />
-                        <input className="w-full px-4 py-2 border rounded mb-4" name="expiry" value={updateModalData.expiry} onChange={handleUpdateChange} placeholder="Ngày hết hạn" />
-                        <input className="w-full px-4 py-2 border rounded mb-4" name="uses" value={updateModalData.uses} onChange={handleUpdateChange} placeholder="Công dụng" />
+                        {/* <input className="w-full px-4 py-2 border rounded mb-4" name="ingredient" value={updateModalData.ingredient} onChange={handleUpdateChange} placeholder="Thành phần" /> */}
+                        <textarea
+                            className="w-full px-4 py-2 border rounded mb-4"
+                            name="ingredient"
+                            value={updateModalData.ingredient}
+                            onChange={handleUpdateChange}
+                            placeholder="Thành phần"
+                        />
+                        <input className="w-full px-4 py-2 border rounded mb-4" name="expiry" value={formatDateWithDayOfWeek(updateModalData.expiry)} onChange={handleUpdateChange} placeholder="Ngày hết hạn" />
+                        <textarea className="w-full px-4 py-2 border rounded mb-4" name="uses" value={updateModalData.uses} onChange={handleUpdateChange} placeholder="Công dụng" />
                         <button className="px-4 py-2 bg-blue-500 text-white rounded" onClick={handleUpdate}>Cập nhật</button>
                         <button className="mt-2 px-4 py-2 bg-gray-300 rounded" onClick={closeUpdateModal}>Đóng</button>
                     </div>

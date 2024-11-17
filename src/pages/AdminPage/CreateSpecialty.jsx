@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import * as SpecialtyService from '../../services/SpecialtyService';
 import { ReloadIcon } from '@radix-ui/react-icons';
-import Swal from 'sweetalert2';
-import * as UserService from '../../services/UserService';  // Import UserService
+import Swal from 'sweetalert2'; // Import UserService
 import { useNavigate } from 'react-router-dom';
 
 const CreateSpecialty = () => {
@@ -10,30 +9,11 @@ const CreateSpecialty = () => {
     const [description, setDescription] = useState('');
     const [avatar, setAvatar] = useState('');
     const [status, setStatus] = useState('Hoạt động');
-    const [headDoctorId, setHeadDoctorId] = useState(''); // Thêm state cho bác sĩ trưởng khoa
-    const [loading, setLoading] = useState(false);
-    const [doctors, setDoctors] = useState([]); // State để lưu danh sách bác sĩ
+    // Thêm state cho bác sĩ trưởng khoa
+    const [loading, setLoading] = useState(false); // State để lưu danh sách bác sĩ
     const navigate = useNavigate();
     // Fetch danh sách bác sĩ khi component mount
-    useEffect(() => {
-        // Lấy danh sách người dùng và lọc ra bác sĩ
-        const fetchDoctors = async () => {
-            try {
-                const res = await UserService.getAllUser(); // Lấy danh sách người dùng
-                const doctorList = res.data.filter((user) => user?.isDoctor); // Lọc bác sĩ
-                setDoctors(doctorList);
-            } catch (error) {
-                console.error("Failed to fetch doctors:", error);
-                Swal.fire({
-                    title: 'Lỗi',
-                    text: 'Không thể tải danh sách bác sĩ!',
-                    icon: 'error',
-                });
-            }
-        };
 
-        fetchDoctors();
-    }, []);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -59,7 +39,7 @@ const CreateSpecialty = () => {
                 name,
                 description,
                 status,
-                head_doctor_Id: headDoctorId,
+
                 avatar // Truyền bác sĩ trưởng khoa vào đây
             });
 
@@ -133,22 +113,7 @@ const CreateSpecialty = () => {
                             </select>
                         </div>
 
-                        <div>
-                            <label htmlFor="head_doctor_Id" className="block text-sm font-medium text-gray-700">Bác sĩ trưởng khoa</label>
-                            <select
-                                id="head_doctor_Id"
-                                value={headDoctorId}
-                                onChange={(e) => setHeadDoctorId(e.target.value)}
-                                className="mt-1 px-3 py-2 border border-gray-300 rounded-lg shadow-sm w-full focus:outline-none focus:ring focus:ring-blue-300"
-                            >
-                                <option value="">Chọn bác sĩ trưởng khoa</option>
-                                {doctors.map((doctorData) => (
-                                    <option key={doctorData.doctor._id} value={doctorData.doctor._id}>
-                                        {doctorData.doctor.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+
 
                         <div>
                             <label htmlFor="avatar" className="block text-sm font-medium text-gray-700">Ảnh đại diện</label>
@@ -193,8 +158,8 @@ const CreateSpecialty = () => {
                     ) : (
                         <button
                             onClick={handleCreateSpecialty}
-                            disabled={!(name && description && status && headDoctorId)}
-                            className={`w-full bg-blue-500 text-white py-2 rounded-lg shadow-md hover:bg-blue-600 transition duration-200 ${!(name && description && status && headDoctorId) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={!(name && description && status)}
+                            className={`w-full bg-blue-500 text-white py-2 rounded-lg shadow-md hover:bg-blue-600 transition duration-200 ${!(name && description && status) ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                             Đăng ký
                         </button>

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as UserService from '../../services/UserService'
@@ -27,17 +26,14 @@ const Profile = () => {
 
     useEffect(() => {
         if (!user.access_token) {
-
             navigate('/signin')
         };
-
-    }, [navigate, user])
+    }, [navigate, user]);
 
     useEffect(() => {
         setName(user?.name)
         setAvatar(user?.avatar)
-
-    }, [user])
+    }, [user]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -49,14 +45,6 @@ const Profile = () => {
             reader.readAsDataURL(file);
         }
     };
-
-    // const handleOnchangeAvatar = async ({ fileList }) => {
-    //   const file = fileList[0]
-    //   if (!file.url && !file.preview) {
-    //     file.preview = await getBase64(file.originFileObj);
-    //   }
-    //   setAvatar(file.preview)
-    // }
 
     const handleUpdate = async () => {
         if (loading) return
@@ -84,31 +72,28 @@ const Profile = () => {
     }
 
     return (
-        <div className="min-h-screen  flex items-center justify-center p-6">
-            <div className="bg-white w-full max-w-5xl rounded-lg shadow-md flex">
-
+        <div className="min-h-screen flex items-center justify-center p-6">
+            <div className="bg-white w-full max-w-7xl rounded-lg shadow-md flex">
                 {/* Sidebar */}
                 <div className="w-1/4 bg-gray-50 p-6">
                     <ul className="space-y-4">
                         <li className="text-lg font-semibold text-gray-700">Tài Khoản Của Tôi</li>
                         <li className="text-orange-500 font-semibold">Hồ Sơ</li>
-                        <li>
-                            <Link to={"/profile/history"} className="text-gray-600">Lịch sử khám</Link>
-                        </li>
+                        {!user?.isDoctor && (
+                            <li>
+                                <Link to={"/profile/history"} className="text-gray-600">Lịch sử khám</Link>
+                            </li>
+                        )}
                         {user?.isDoctor && (
                             <>
                                 <li>
-
                                     <Link to={"/profile/schedule"} className=" text-gray-600">Tạo lịch khám bệnh</Link>
                                 </li>
                                 <li>
-
                                     <Link to={"/profile/patient-list"} className=" text-gray-600">Danh sách bệnh nhân</Link>
                                 </li>
-
                             </>
                         )}
-
                     </ul>
                 </div>
 
@@ -117,13 +102,12 @@ const Profile = () => {
                     <h2 className="text-2xl font-semibold mb-6">Hồ Sơ Của Tôi</h2>
 
                     <div className="w-full mt-8">
-
                         <CardContent>
                             <div>
-
-
-                                <div>
-                                    <div className="flex items-center justify-center">
+                                {/* Avatar and Input Fields */}
+                                <div className="flex flex-row-reverse items-center space-x-reverse space-x-6">
+                                    {/* Avatar */}
+                                    <div>
                                         {avatar && (
                                             <>
                                                 <label htmlFor="avatar" style={{ cursor: 'pointer' }}>
@@ -150,42 +134,41 @@ const Profile = () => {
                                         )}
                                     </div>
 
+                                    {/* User Info Inputs */}
+                                    <div className="flex-1">
+                                        <div className="my-2">
+                                            <Label htmlFor="email">Email</Label>
+                                            <Input disabled id="email" value={user.email} />
+                                        </div>
 
+                                        {user?.isDoctor && (
+                                            <Button variant={'link'} onClick={() => navigate('/doctor')} span={4}>ĐẶT LỊCH KHÁM BỆNH</Button>
+                                        )}
 
-                                    <div>
-                                        <Label htmlFor="email">Email</Label>
-                                        <Input disabled id="email" value={user.email} />
+                                        <div className="my-2">
+                                            <Label htmlFor="name">Tên</Label>
+                                            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                                        </div>
+
+                                        <div className="my-2">
+                                            <Label htmlFor="phone">Số điện thoại</Label>
+                                            <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                                        </div>
+
+                                        <div className="my-2">
+                                            <Label htmlFor="birthday">Ngày sinh</Label>
+                                            <Input id="birthday" value={birthday} onChange={(e) => setBirthDay(e.target.value)} />
+                                        </div>
+
+                                        <div className="my-2">
+                                            <Label htmlFor="address">Địa chỉ</Label>
+                                            <Input id="address" value={address} onChange={(e) => setAddress(e.target.value)} />
+                                        </div>
                                     </div>
-
-                                    {user?.isDoctor && (
-                                        <Button variant={'link'} onClick={() => navigate('/doctor')} span={4}>ĐẶT LỊCH KHÁM BỆNH</Button>
-                                    )}
-
-                                    <div className="my-2">
-                                        <Label htmlFor="name">Tên</Label>
-                                        <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
-                                    </div>
-
-                                    <div className="my-2">
-                                        <Label htmlFor="phone">Số điện thoại</Label>
-                                        <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                                    </div>
-
-                                    <div className="my-2">
-                                        <Label htmlFor="birthday">Ngày sinh</Label>
-                                        <Input id="birthday" value={birthday} onChange={(e) => setBirthDay(e.target.value)} />
-                                    </div>
-
-                                    <div className="my-2">
-                                        <Label htmlFor="address">Địa chỉ</Label>
-                                        <Input id="address" value={address} onChange={(e) => setAddress(e.target.value)} />
-                                    </div>
-
-
-
                                 </div>
                             </div>
                         </CardContent>
+
                         <CardFooter className="flex justify-between">
                             {loading ? (
                                 <Button disabled className="w-full">

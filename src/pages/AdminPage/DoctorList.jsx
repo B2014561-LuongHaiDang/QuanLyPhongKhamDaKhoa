@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye } from "lucide-react";
+
 import * as UserService from "../../services/UserService";
 
 const DoctorList = () => {
     const user = useSelector((state) => state.user);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 4;
     const navigate = useNavigate();
 
     const [doctors, setDoctors] = useState([]);
@@ -46,19 +48,28 @@ const DoctorList = () => {
         doctor.name.toLowerCase().includes(searchName.toLowerCase()) &&
         doctor.doctor?.specialist.toLowerCase().includes(searchSpecialist.toLowerCase())
     );
+    const totalPages = Math.ceil(filteredDoctors.length / itemsPerPage);
+    const currentItems = filteredDoctors.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-            <div className="bg-white w-full max-w-5xl rounded-lg shadow-md flex">
+        <div className=" flex items-center justify-center p-6">
+            <div className="bg-white w-full max-w-7xl rounded-lg shadow-md flex">
                 {/* Sidebar */}
-                <div className="w-1/4 bg-gray-50 p-6">
+                <div className="w-1/5 bg-gray-50 p-6">
                     <ul className="space-y-4">
                         <li className="text-lg font-semibold text-gray-700">Tài Khoản Của Tôi</li>
-                        <li>
-                            <Link to={"/admin"} className="text-gray-600">Hồ Sơ</Link>
-                        </li>
+
                         {user?.isAdmin && (
                             <>
+                                <li>
+                                    <Link to={"/admin"} className="text-gray-600">Hồ Sơ</Link>
+                                </li>
                                 <li>
                                     <Link to={"/admin/doctor-list"} className="text-orange-500 font-semibold">Danh sách bác sĩ</Link>
                                 </li>
@@ -68,13 +79,16 @@ const DoctorList = () => {
                                 <li>
                                     <Link to={"/admin/medicine-list"} className="text-gray-600">Thuốc</Link>
                                 </li>
+                                <li>
+                                    <Link to={"/admin/specialty-list"} className="text-gray-600">Chuyên khoa</Link>
+                                </li>
                             </>
                         )}
                     </ul>
                 </div>
 
                 {/* Main Content */}
-                <div className="w-3/4 p-6">
+                <div className="w-4/5 p-6">
                     <h2 className="text-2xl font-semibold mb-6">Danh sách Bác sĩ</h2>
 
                     {/* Thanh tìm kiếm */}
@@ -105,22 +119,23 @@ const DoctorList = () => {
                                         <th className="border px-4 py-2 text-left">Email</th>
                                         <th className="border px-4 py-2 text-left">Tên</th>
                                         <th className="border px-4 py-2 text-left">Chuyên ngành</th>
-                                        <th className="border px-4 py-2 text-left">Chi tiết</th>
+                                        <th className="border px-4 py-2 text-left">Học vị</th>
+                                        <th className="border px-4 py-2 text-left">Kinh nghiệm</th>
+                                        <th className="border px-4 py-2 text-left">Chức vụ, nơi công tác</th>
 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredDoctors.length > 0 ? (
-                                        filteredDoctors.map((doctor) => (
+                                    {currentItems.length > 0 ? (
+                                        currentItems.map((doctor) => (
                                             <tr key={doctor._id}>
                                                 <td className="border px-4 py-2">{doctor.email}</td>
                                                 <td className="border px-4 py-2">{doctor.name}</td>
                                                 <td className="border px-4 py-2">{doctor.doctor?.specialist}</td>
-                                                <td className="border px-4 py-2">
-                                                    <Link to={`/doctor/${doctor.doctor._id}`} className="text-blue-500 hover:underline">
-                                                        <Eye />
-                                                    </Link>
-                                                </td>
+                                                <td className="border px-4 py-2">{doctor.doctor?.title}</td>
+                                                <td className="border px-4 py-2">{doctor.doctor?.experience} năm</td>
+                                                <td className="border px-4 py-2">{doctor.doctor?.position}, {doctor.doctor?.hospital}</td>
+
                                             </tr>
                                         ))
                                     ) : (
@@ -132,6 +147,14 @@ const DoctorList = () => {
                                     )}
                                 </tbody>
                             </table>
+                            <div className="flex justify-between mt-4">
+                                <button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)} className="px-4 py-2 bg-gray-200 rounded">
+                                    Trang trước
+                                </button>
+                                <button disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)} className="px-4 py-2 bg-gray-200 rounded">
+                                    Trang sau
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

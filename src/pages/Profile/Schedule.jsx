@@ -69,22 +69,25 @@ const Schedule = () => {
 
     return (
         <div className="min-h-screen  flex items-center justify-center p-6">
-            <div className="bg-white w-full max-w-5xl rounded-lg shadow-md flex">
+            <div className="bg-white w-full max-w-7xl rounded-lg shadow-md flex">
 
                 {/* Sidebar */}
                 <div className="w-1/4 bg-gray-50 p-6">
                     <ul className="space-y-4">
                         <li className="text-lg font-semibold text-gray-700">Tài Khoản Của Tôi</li>
 
-                        {user?.isDoctor && (
 
+
+                        <li>
+                            <Link to={"/profile"} className="text-gray-600">Hồ sơ</Link>
+                        </li>
+                        {!user?.isDoctor && (
+                            <li>
+                                <Link to={"/profile/history"} className="text-gray-600">Lịch sử khám</Link>
+                            </li>
+                        )}
+                        {user?.isDoctor && (
                             <>
-                                <li>
-                                    <Link to={"/profile"} className="text-gray-600">Hồ sơ</Link>
-                                </li>
-                                <li>
-                                    <Link to={"/profile/history"} className="text-gray-600">Lịch sử khám</Link>
-                                </li>
                                 <li>
 
                                     <Link to={"/profile/schedule"} className=" text-orange-500 font-semibold">Tạo lịch khám bệnh</Link>

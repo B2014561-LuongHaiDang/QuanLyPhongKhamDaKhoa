@@ -100,18 +100,18 @@ const SpecialtyList = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-            <div className="bg-white w-full max-w-5xl rounded-lg shadow-md flex">
-                <div className="w-1/4 bg-gray-50 p-6">
+        <div className="  flex items-center justify-center p-6">
+            <div className="bg-white w-full max-w-7xl rounded-lg shadow-md flex">
+                <div className="w-1/5 bg-gray-50 p-6">
                     <ul className="space-y-4">
                         <li className="text-lg font-semibold text-gray-700">Tài Khoản Của Tôi</li>
-                        <li>
-                            <Link to={"/admin"} className="text-gray-600">
-                                Hồ Sơ
-                            </Link>
-                        </li>
                         {user?.isAdmin && (
                             <>
+                                <li>
+                                    <Link to={"/admin"} className="text-gray-600">
+                                        Hồ Sơ
+                                    </Link>
+                                </li>
                                 <li>
                                     <Link to={"/admin/doctor-list"} className="text-gray-600">
                                         Danh sách bác sĩ
@@ -123,16 +123,19 @@ const SpecialtyList = () => {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={"/admin/medicine-list"} className=" text-orange-500 font-semibold">
+                                    <Link to={"/admin/medicine-list"} className="text-gray-600 ">
                                         Thuốc
                                     </Link>
+                                </li>
+                                <li>
+                                    <Link to={"/admin/specialty-list"} className=" text-orange-500 font-semibold">Chuyên khoa</Link>
                                 </li>
                             </>
                         )}
                     </ul>
                 </div>
 
-                <div className="w-3/4 p-6">
+                <div className="w-4/5 p-6">
                     <div className="flex justify-between items-center mb-6">
                         <div>
                             <h2 className="text-2xl font-semibold mb-6">Danh sách chuyên khoa</h2>

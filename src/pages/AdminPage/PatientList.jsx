@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye } from "lucide-react";
 import * as UserService from "../../services/UserService";
 
 const PatientList = () => {
@@ -12,8 +11,6 @@ const PatientList = () => {
     const [users, setUsers] = useState([]);
     const [searchName, setSearchName] = useState("");
     const [searchEmail, setSearchEmail] = useState("");
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalData, setModalData] = useState(null);
 
     useEffect(() => {
         // Kiểm tra quyền truy cập
@@ -33,7 +30,8 @@ const PatientList = () => {
         const fetchUsers = async () => {
             try {
                 const res = await UserService.getAllUser();
-                setUsers(res.data);
+                const doctors = res.data.filter(user => !user.isDoctor);
+                setUsers(doctors);
             } catch (error) {
                 console.error("Failed to fetch users:", error);
             }
@@ -48,27 +46,18 @@ const PatientList = () => {
         user.email.toLowerCase().includes(searchEmail.toLowerCase())
     );
 
-    const openModal = (data) => {
-        setModalData(data);
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
-
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-            <div className="bg-white w-full max-w-5xl rounded-lg shadow-md flex">
+        <div className="  flex items-center justify-center p-6">
+            <div className="bg-white w-full max-w-7xl rounded-lg shadow-md flex">
                 {/* Sidebar */}
-                <div className="w-1/4 bg-gray-50 p-6">
+                <div className="w-1/5 bg-gray-50 p-6">
                     <ul className="space-y-4">
                         <li className="text-lg font-semibold text-gray-700">Tài Khoản Của Tôi</li>
-                        <li>
-                            <Link to={"/admin"} className="text-gray-600">Hồ Sơ</Link>
-                        </li>
                         {user?.isAdmin && (
                             <>
+                                <li>
+                                    <Link to={"/admin"} className="text-gray-600">Hồ Sơ</Link>
+                                </li>
                                 <li>
                                     <Link to={"/admin/doctor-list"} className="text-gray-600">Danh sách bác sĩ</Link>
                                 </li>
@@ -78,13 +67,16 @@ const PatientList = () => {
                                 <li>
                                     <Link to={"/admin/medicine-list"} className="text-gray-600">Thuốc</Link>
                                 </li>
+                                <li>
+                                    <Link to={"/admin/specialty-list"} className="text-gray-600">Chuyên khoa</Link>
+                                </li>
                             </>
                         )}
                     </ul>
                 </div>
 
                 {/* Main Content */}
-                <div className="w-3/4 p-6">
+                <div className="w-4/5 p-6">
                     <h2 className="text-2xl font-semibold mb-6">Danh sách Bệnh nhân</h2>
 
                     {/* Thanh tìm kiếm */}
@@ -113,7 +105,9 @@ const PatientList = () => {
                                     <tr className="bg-gray-200">
                                         <th className="border border-gray-300 px-4 py-2">Email</th>
                                         <th className="border border-gray-300 px-4 py-2">Tên</th>
-                                        <th className="border border-gray-300 px-4 py-2">Chi Tiết</th>
+                                        <th className="border border-gray-300 px-4 py-2">Số điện thoại</th>
+                                        <th className="border border-gray-300 px-4 py-2">Địa chỉ</th>
+                                        <th className="border border-gray-300 px-4 py-2">Ngày sinh</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -122,14 +116,9 @@ const PatientList = () => {
                                             <tr key={user._id} className="hover:bg-gray-50">
                                                 <td className="border border-gray-300 px-4 py-2">{user.email}</td>
                                                 <td className="border border-gray-300 px-4 py-2">{user.name}</td>
-                                                <td className="border border-gray-300 px-4 py-2">
-                                                    <button
-                                                        className="text-blue-500 hover:underline"
-                                                        onClick={() => openModal(user)}
-                                                    >
-                                                        <Eye className="inline" />
-                                                    </button>
-                                                </td>
+                                                <td className="border border-gray-300 px-4 py-2">{user.phone}</td>
+                                                <td className="border border-gray-300 px-4 py-2">{user.address}</td>
+                                                <td className="border border-gray-300 px-4 py-2">{user.birthday}</td>
                                             </tr>
                                         ))
                                     ) : (
@@ -147,24 +136,7 @@ const PatientList = () => {
             </div>
 
             {/* Modal hiển thị thông tin chi tiết */}
-            {isModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div className="bg-white rounded-lg p-5 max-w-sm w-full">
-                        <h2 className="text-lg font-bold mb-4">Chi tiết thông tin</h2>
-                        <p><strong>Tên:</strong> {modalData?.name}</p>
-                        <p><strong>Email:</strong> {modalData?.email}</p>
-                        <p><strong>Ngày sinh:</strong> {modalData?.birthday}</p>
-                        <p><strong>Địa chỉ:</strong> {modalData?.address}</p>
-                        <p><strong>Số điện thoại:</strong> {modalData?.phone}</p>
-                        <button
-                            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-                            onClick={closeModal}
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            )}
+
         </div>
     );
 };

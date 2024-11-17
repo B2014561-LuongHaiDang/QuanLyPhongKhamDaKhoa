@@ -44,7 +44,7 @@ const History = () => {
 
     return (
         <div className="min-h-screen  flex items-center justify-center p-6">
-            <div className="bg-white w-full max-w-5xl rounded-lg shadow-md flex">
+            <div className="bg-white w-full max-w-7xl rounded-lg shadow-md flex">
 
                 {/* Sidebar */}
                 <div className="w-1/4 bg-gray-50 p-6">

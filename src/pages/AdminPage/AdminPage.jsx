@@ -78,18 +78,18 @@ const AdminPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="bg-white w-full max-w-5xl rounded-lg shadow-md flex">
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="bg-white w-full max-w-7xl rounded-lg shadow-md flex">
 
         {/* Sidebar */}
-        <div className="w-1/4 bg-gray-50 p-6">
+        <div className="w-1/5 bg-gray-50 p-6">
           <ul className="space-y-4">
             <li className="text-lg font-semibold text-gray-700">Tài Khoản Của Tôi</li>
-            <li>
-              <Link to={"/admin"} className="text-orange-500 font-semibold">Hồ Sơ</Link>
-            </li>
             {user?.isAdmin && (
               <>
+                <li>
+                  <Link to={"/admin"} className="text-orange-500 font-semibold">Hồ Sơ</Link>
+                </li>
                 <li>
                   <Link to={"/admin/doctor-list"} className="text-gray-600">Danh sách bác sĩ</Link>
                 </li>
@@ -100,10 +100,6 @@ const AdminPage = () => {
                   <Link to={"/admin/medicine-list"} className="text-gray-600">Thuốc</Link>
                 </li>
                 <li>
-                  <Link to={"/admin/create-doctor"} className="text-gray-600">Thêm thông tin</Link>
-                </li>
-
-                <li>
                   <Link to={"/admin/specialty-list"} className="text-gray-600">Chuyên khoa</Link>
                 </li>
               </>
@@ -112,7 +108,7 @@ const AdminPage = () => {
         </div>
 
         {/* Main Content */}
-        <div className="w-3/4 p-6">
+        <div className="w-4/5 p-6">
 
           <div className="w-full mt-8 flex justify-center">
             {/* Biểu đồ tròn cho Bác sĩ và Bệnh nhân */}

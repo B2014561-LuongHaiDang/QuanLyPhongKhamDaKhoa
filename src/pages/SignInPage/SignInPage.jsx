@@ -56,7 +56,7 @@ const SignInPage = () => {
         <CardHeader className="flex flex-col items-center">
           <img src="/assets/images/logo-benh-vien.jpg" alt="Hospital Logo" className="w-full h-full mb-2" />
           <CardTitle className="text-lg font-semibold text-blue-700">Đăng Nhập</CardTitle>
-          <p className="text-gray-500 text-sm">Chào mừng bạn đến với hệ thống quản lý bệnh viện</p>
+          <p className="text-gray-500 text-sm">Chào mừng bạn đến với hệ thống quản lý phòng khám</p>
         </CardHeader>
 
         <CardContent>

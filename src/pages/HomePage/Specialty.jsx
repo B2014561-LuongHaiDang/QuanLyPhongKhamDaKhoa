@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import * as SpecialtyService from '../../services/SpecialtyService'; // Import service
 
-
 const Specialty = () => {
     const [specialties, setSpecialties] = useState([]); // State để lưu các chuyên khoa
     const [loading, setLoading] = useState(true); // State để theo dõi trạng thái tải dữ liệu
+    const [searchTerm, setSearchTerm] = useState(''); // State để lưu giá trị tìm kiếm
     const user = useSelector(state => state.user); // Lấy thông tin user từ Redux (hoặc từ localStorage)
 
     useEffect(() => {
@@ -22,14 +22,15 @@ const Specialty = () => {
             }
         };
         fetchSpecialties()
-
-
     }, []);
 
+    // Lọc danh sách chuyên khoa theo từ khóa tìm kiếm
+    const filteredSpecialties = specialties.filter(specialty =>
+        specialty.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
-        <div className="container mx-auto mt-8 pb-10">
-
-
+        <div className="min-h-screen container mx-auto mt-8 pb-10">
             {/* Hiển thị chuyên khoa cho người dùng không phải admin */}
             {!user?.isAdmin && (
                 <>
@@ -37,12 +38,23 @@ const Specialty = () => {
                         <h2 className="text-xl font-semibold">Chuyên khoa</h2>
                     </div>
 
+                    {/* Thanh tìm kiếm */}
+                    <div className="mb-4">
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            placeholder="Tìm kiếm chuyên khoa..."
+                            className="w-full p-2 border border-gray-300 rounded-md"
+                        />
+                    </div>
+
                     {loading ? (
                         <div className="text-center">Đang tải...</div>
                     ) : (
                         <div className="grid grid-cols-5 gap-6">
-                            {specialties.length > 0 ? (
-                                specialties.map((specialty) => (
+                            {filteredSpecialties.length > 0 ? (
+                                filteredSpecialties.map((specialty) => (
                                     <div key={specialty._id} className="p-4 hover:scale-[1.1] transition-all bg-white shadow-lg rounded-lg flex flex-col items-center text-center">
                                         <Link to={`/specialty-detail?specialtyId=${specialty._id}`} className="hover:no-underline flex flex-col items-center">
                                             <img
@@ -61,9 +73,6 @@ const Specialty = () => {
                             )}
                         </div>
                     )}
-
-
-
                 </>
             )}
         </div>

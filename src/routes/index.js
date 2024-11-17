@@ -15,7 +15,6 @@ import AdminPatientList from "../pages/AdminPage/PatientList";
 import AdminPage from "../pages/AdminPage/AdminPage";
 import DoctorList from "../pages/AdminPage/DoctorList";
 import MedicineList from "../pages/AdminPage/MedicineList";
-import CreateDoctor from "../pages/AdminPage/CreateDoctor";
 import CreateMedicine from "../pages/AdminPage/CreateMedicine";
 import CreateSpecialty from "../pages/AdminPage/CreateSpecialty";
 
@@ -24,6 +23,9 @@ import Specialty from "../pages/HomePage/Specialty";
 import FormBMI from "../pages/HomePage/FormBMI";
 import Medicine from "../pages/HomePage/Medicine";
 import SpecialtyList from "../pages/AdminPage/SpecialtyList";
+import MedicineDetail from "../pages/HomePage/MedicineDetail";
+import CreatePrescription from "../pages/AdminPage/CreatePrescription";
+
 
 // import UserList from "../pages/AdminPage/UserList";
 // import ThongTinBenhVien from "../pages/ThongTinBenhVien/ThongTinBenhVien";
@@ -52,6 +54,11 @@ export const routes = [
     {
         path: '/medicine',
         page: Medicine,
+        isShowHeader: true
+    },
+    {
+        path: '/medicine-detail',
+        page: MedicineDetail,
         isShowHeader: true
     },
 
@@ -120,11 +127,7 @@ export const routes = [
         page: SpecialtyList,
         isShowHeader: true
     },
-    {
-        path: '/admin/create-doctor',
-        page: CreateDoctor,
-        isShowHeader: true
-    },
+
     {
         path: '/admin/create-medicine',
         page: CreateMedicine,
@@ -135,6 +138,13 @@ export const routes = [
         page: CreateSpecialty,
         isShowHeader: true
     },
+    {
+        path: '/admin/create-prescription',
+        page: CreatePrescription,
+        isShowHeader: true
+    },
+
+
 
     // {
     //     path: '/admin/doctor',
