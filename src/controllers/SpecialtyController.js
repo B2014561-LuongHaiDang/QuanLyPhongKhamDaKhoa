@@ -4,14 +4,14 @@ const JwtService = require('../services/JwtService');  // Dịch vụ JWT vẫn 
 // Controller để tạo chuyên khoa mới
 const createSpecialty = async (req, res) => {
     try {
-        const { name, description, head_doctor_Id, status } = req.body;
+        const { name, description, status, avatar } = req.body;
 
 
         // Kiểm tra các trường bắt buộc có trong request
-        if (!name || !description || !head_doctor_Id || !status) {
+        if (!name || !description || !status || !avatar) {
             return res.status(400).json({
                 status: 'ERR',
-                message: 'The input fields (name, description, head_doctor_Id, status) are required'
+                message: 'The input fields (name, description, status) are required'
             });
         }
 

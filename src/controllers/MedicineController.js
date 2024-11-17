@@ -79,11 +79,30 @@ const deleteMedicine = async (req, res) => {
     }
 }
 
+const getMedicineById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const response = await MedicineService.getMedicineById(id);
+        if (!response) {
+            return res.status(404).json({
+                status: 'ERR',
+                message: 'Thuốc không tồn tại'
+            });
+        }
+        return res.status(200).json(response);
+    } catch (e) {
+        return res.status(500).json({
+            status: 'ERR',
+            message: e.message || 'Internal Server Error'
+        });
+    }
+};
+
 module.exports = {
     createMedicine,
     getAllMedicines,
     refreshToken,
     updateMedicine,
     deleteMedicine,
-
+    getMedicineById,
 }

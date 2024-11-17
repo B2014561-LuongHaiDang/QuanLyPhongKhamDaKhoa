@@ -13,7 +13,6 @@ const specialtySchema = new mongoose.Schema(
             required: true,  // Bắt buộc có mô tả chuyên khoa
             trim: true       // Loại bỏ khoảng trắng thừa
         },
-        head_doctor_Id: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor' },
 
         // Các trang thiết bị chuyên khoa
         status: {

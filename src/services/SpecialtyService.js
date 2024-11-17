@@ -2,7 +2,7 @@ const Specialty = require('../models/Specialty');  // Import model Specialty
 
 // Service để tạo chuyên khoa mới
 const createSpecialty = async (newSpecialty) => {
-    const { name, description, head_doctor_Id, status, avatar, icon } = newSpecialty;
+    const { name, description, status, avatar } = newSpecialty;
     try {
         // Kiểm tra xem chuyên khoa đã tồn tại chưa (dựa vào tên chuyên khoa)
         const checkSpecialty = await Specialty.findOne({ name });
@@ -17,10 +17,8 @@ const createSpecialty = async (newSpecialty) => {
         const createdSpecialty = await Specialty.create({
             name,
             description,
-            head_doctor_Id,
             status,
             avatar,
-            icon,
         });
 
         if (createdSpecialty) {
@@ -40,7 +38,7 @@ const createSpecialty = async (newSpecialty) => {
 const getAllSpecialties = async () => {
     try {
         // Lấy tất cả các chuyên khoa và populate bác sĩ trưởng khoa (head_doctor_Id)
-        return await Specialty.find().populate('head_doctor_Id');
+        return await Specialty.find()
     } catch (error) {
         throw new Error(`Lỗi khi lấy danh sách chuyên khoa: ${error.message}`);
     }
@@ -49,7 +47,7 @@ const getAllSpecialties = async () => {
 // Service để lấy chuyên khoa theo ID
 const getSpecialtyById = async (id) => {
     try {
-        const specialty = await Specialty.findById(id).populate('head_doctor_Id');
+        const specialty = await Specialty.findById(id)
         if (!specialty) throw new Error('Không tìm thấy chuyên khoa!');
         return specialty;
     } catch (error) {

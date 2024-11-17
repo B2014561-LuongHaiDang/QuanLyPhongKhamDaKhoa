@@ -55,16 +55,16 @@ const getAllMedicines = async () => {
     })
 };
 
-// // Service để lấy thuốc theo ID
-// const getMedicineById = async (id) => {
-//     try {
-//         const medicine = await Medicine.findById(id);
-//         if (!medicine) throw new Error('Không tìm thấy thuốc!');
-//         return medicine;
-//     } catch (error) {
-//         throw new Error(`Lỗi khi lấy thuốc: ${error.message}`);
-//     }
-// };
+// Service để lấy thuốc theo ID
+const getMedicineById = async (id) => {
+    try {
+        const medicine = await Medicine.findById(id);
+        if (!medicine) throw new Error('Không tìm thấy thuốc!');
+        return medicine;
+    } catch (error) {
+        throw new Error(`Lỗi khi lấy thuốc: ${error.message}`);
+    }
+};
 
 const updateMedicine = async (id, updatedData) => {
     try {
@@ -90,7 +90,7 @@ const deleteMedicine = async (id) => {
 module.exports = {
     createMedicine,
     getAllMedicines,
-    // getMedicineById,
+    getMedicineById,
     updateMedicine,
     deleteMedicine
 };

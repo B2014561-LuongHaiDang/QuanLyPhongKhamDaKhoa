@@ -5,8 +5,8 @@ const MedicineController = require('../controllers/MedicineController');
 // Get all medicines
 router.get('/', MedicineController.getAllMedicines);
 
-// // Get medicine by ID
-// router.get('/:id', medicineController.getMedicineById);
+// Get medicine by ID
+router.get('/:id', MedicineController.getMedicineById);
 
 // Create a new medicine
 router.post('/', MedicineController.createMedicine);

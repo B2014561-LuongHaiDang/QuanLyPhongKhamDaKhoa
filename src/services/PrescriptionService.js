@@ -1,138 +1,158 @@
-const Prescription = require("../models/Prescription.js");
+const Prescription = require("../models/Prescription");
+const Medicine = require("../models/Medicine");
 
-const createPrescription = (newPrescription) => {
-    return new Promise(async (resolve, reject) => {
-        const { doctorId, userId, medicineIds, instructions } = newPrescription;
-        try {
-            // Kiểm tra xem đã có toa thuốc trùng lặp nào chưa (tùy vào tiêu chí kiểm tra)
-            const existingPrescription = await Prescription.findOne({
-                doctorId,
-                userId,
-                instructions
-            });
+const createPrescription = async (newPrescription) => {
+    const { doctorId, userId, medicineDetails } = newPrescription;
+    try {
+        // Kiểm tra xem đã có toa thuốc trùng lặp nào chưa
+        // const existingPrescription = await Prescription.findOne({
+        //     doctorId,
+        //     userId,
+        //     'medicineDetails.medicineId': { $in: medicineDetails.map(item => item.medicineId) } // Kiểm tra toa thuốc đã có thuốc này chưa
+        // });
 
-            if (existingPrescription) {
-                return resolve({
-                    status: 'ERR',
-                    message: 'Prescription already exists'
-                });
-            }
+        // if (existingPrescription) {
+        //     return {
+        //         status: 'ERR',
+        //         message: 'Prescription already exists'
+        //     };
+        // }
 
-            // Tạo mới toa thuốc
-            const createdPrescription = await Prescription.create({
-                doctorId,
-                userId,
-                medicineIds,
-                instructions
-            });
+        // Tạo mới toa thuốc
+        const createdPrescription = await Prescription.create({
+            doctorId,
+            userId,
+            medicineDetails
+        });
 
-            if (createdPrescription) {
-                resolve({
-                    status: 'OK',
-                    message: 'Prescription created successfully',
-                    data: createdPrescription
-                });
-            }
-        } catch (error) {
-            reject({
-                status: 'ERR',
-                message: 'Error creating prescription',
-                error: error.message
-            });
-        }
-    });
+        // Cập nhật số lượng thuốc trong kho (nếu cần thiết)
+        // for (const detail of medicineDetails) {
+        //     const medicine = await Medicine.findById(detail.medicineId);
+        //     if (medicine && medicine.stock >= detail.quantity) {
+        //         medicine.stock -= detail.quantity; // Giảm số lượng thuốc trong kho
+        //         await medicine.save();
+        //     } else {
+        //         // Nếu thuốc không đủ trong kho, hủy tạo toa thuốc
+        //         await Prescription.findByIdAndDelete(createdPrescription._id); // Xóa toa thuốc đã tạo
+        //         return {
+        //             status: 'ERR',
+        //             message: `Not enough stock for ${medicine.name}`
+        //         };
+        //     }
+        // }
+
+        return {
+            status: 'OK',
+            message: 'Prescription created successfully',
+            data: createdPrescription
+        };
+    } catch (error) {
+        return {
+            status: 'ERR',
+            message: 'Error creating prescription',
+            error: error.message
+        };
+    }
 };
 
-const updatePrescription = (id, data) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            // Tìm và kiểm tra xem toa thuốc có tồn tại không
-            const existingPrescription = await Prescription.findById(id);
-            if (!existingPrescription) {
-                return resolve({
-                    status: 'ERR',
-                    message: 'Prescription not found'
-                });
-            }
-
-            // Cập nhật toa thuốc
-            const updatedPrescription = await Prescription.findByIdAndUpdate(
-                id,
-                { ...data },
-                { new: true }
-            );
-
-            resolve({
-                status: 'OK',
-                message: 'Prescription updated successfully',
-                data: updatedPrescription
-            });
-        } catch (error) {
-            reject({
+const updatePrescription = async (id, data) => {
+    try {
+        const existingPrescription = await Prescription.findById(id);
+        if (!existingPrescription) {
+            return {
                 status: 'ERR',
-                message: 'Error updating prescription',
-                error: error.message
-            });
+                message: 'Prescription not found',
+            };
         }
-    });
+
+        // Cập nhật toa thuốc
+        const updatedPrescription = await Prescription.findByIdAndUpdate(id, data, { new: true });
+
+        return {
+            status: 'OK',
+            message: 'Prescription updated successfully',
+            data: updatedPrescription,
+        };
+    } catch (error) {
+        console.error("Error updating prescription:", error);
+        return {
+            status: 'ERR',
+            message: 'Error updating prescription',
+            error: error.message,
+        };
+    }
 };
 
-const getAllPrescriptions = () => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const allPrescriptions = await Prescription.find()
-                .populate('doctorId', 'name') // Lấy thêm thông tin bác sĩ
-                .populate('userId', 'name') // Lấy thêm thông tin bệnh nhân
-                .populate('medicineIds', 'name'); // Lấy thêm thông tin thuốc
+const getAllPrescriptions = async () => {
+    try {
+        const allPrescriptions = await Prescription.find()
+            .populate('doctorId', 'name') // Lấy thông tin bác sĩ
+            .populate('userId', 'name') // Lấy thông tin bệnh nhân
+            .populate('medicineDetails.medicineId', 'name'); // Lấy thông tin thuốc trong chi tiết
 
-            resolve({
-                status: 'OK',
-                message: 'Fetched all prescriptions successfully',
-                data: allPrescriptions
-            });
-        } catch (error) {
-            reject({
-                status: 'ERR',
-                message: 'Error fetching prescriptions',
-                error: error.message
-            });
-        }
-    });
+        return {
+            status: 'OK',
+            message: 'Fetched all prescriptions successfully',
+            data: allPrescriptions
+        };
+    } catch (error) {
+        return {
+            status: 'ERR',
+            message: 'Error fetching prescriptions',
+            error: error.message
+        };
+    }
 };
 
-const getDetailsPrescription = (id) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const prescription = await Prescription.findById(id)
-                .populate('doctorId', 'name')
-                .populate('userId', 'name')
-                .populate('medicineIds', 'name');
+const getDetailsPrescription = async (id) => {
+    try {
+        const prescription = await Prescription.findById(id)
+            .populate('doctorId', 'name')
+            .populate('userId', 'name')
+            .populate('medicineDetails.medicineId', 'name');
 
-            if (!prescription) {
-                return resolve({
-                    status: 'ERR',
-                    message: 'Prescription not found'
-                });
-            }
-
-            resolve({
-                status: 'OK',
-                message: 'Fetched prescription details successfully',
-                data: prescription
-            });
-        } catch (error) {
-            reject({
+        if (!prescription) {
+            return {
                 status: 'ERR',
-                message: 'Error fetching prescription details',
-                error: error.message
-            });
+                message: 'Prescription not found'
+            };
         }
-    });
+
+        return {
+            status: 'OK',
+            message: 'Fetched prescription details successfully',
+            data: prescription
+        };
+    } catch (error) {
+        return {
+            status: 'ERR',
+            message: 'Error fetching prescription details',
+            error: error.message
+        };
+    }
+};
+const getPrescriptionsByDoctorId = async (doctorId) => {
+    try {
+        const prescriptions = await Prescription.find({ doctorId })
+            .populate('userId') // Nếu muốn lấy thông tin chi tiết user
+            .populate('medicineDetails.medicineId'); // Lấy thông tin chi tiết thuốc
+        return {
+            status: 'OK',
+            data: prescriptions,
+        };
+    } catch (error) {
+        console.error("Error fetching prescriptions by doctorId:", error);
+        return {
+            status: 'ERR',
+            message: error.message || 'Internal server error',
+        };
+    }
 };
 
 module.exports = {
     createPrescription,
     updatePrescription,
     getAllPrescriptions,
-    getDetailsPrescription
+    getDetailsPrescription,
+    getPrescriptionsByDoctorId
 };

@@ -6,7 +6,7 @@ const Doctor = require("../models/Doctor.js")
 
 const createUser = (newUser) => {
     return new Promise(async (resolve, reject) => {
-        const { email, password } = newUser
+        const { email, password, isDoctor } = newUser
         try {
             const checkUser = await User.findOne({
                 email
@@ -22,6 +22,7 @@ const createUser = (newUser) => {
             const createdUser = await User.create({
                 email,
                 password: hash,
+                isDoctor,
             })
             if (createdUser) {
                 resolve({

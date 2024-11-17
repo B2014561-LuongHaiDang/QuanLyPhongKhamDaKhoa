@@ -7,5 +7,6 @@ router.post('/', PrescriptionController.createPrescription)
 router.put('/:id', PrescriptionController.updatePrescription)
 router.get('/', PrescriptionController.getAllPrescription)
 router.get('/:id', PrescriptionController.getDetailsPrescription)
+router.get('/doctor/:doctorId', PrescriptionController.getPrescriptionsByDoctorId);
 
 module.exports = router
